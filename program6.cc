@@ -38,24 +38,21 @@ int main()
   CDKSCREEN	*cdkscreen;
   CDKMATRIX     *myMatrix;           // CDK Screen Matrix
 
-  // Remember that matrix starts out at 1,1.
-  // Since arrays start out at 0, the first entries
-  // below ("R0", and "C0") are just placeholders
-  // 
-  // Finally... make sure your arrays have enough entries given the
-  // values you choose to set for MATRIX_WIDTH and MATRIX_HEIGHT
-  // above.
+   /*Remember that matrix starts out at 1,1.
+   Since arrays start out at 0, the first entries
+   below ("R0", and "C0") are just placeholders
+   
+   Finally... make sure your arrays have enough entries given the
+   values you choose to set for MATRIX_WIDTH and MATRIX_HEIGHT
+   above.*/
 
   const char 		*rowTitles[] = {"0", "a", "b", "c", "d", "e"};
   const char 		*columnTitles[] = {"0", "a", "b", "c", "d", "e"};
   int		boxWidths[] = {BOX_WIDTH, BOX_WIDTH, BOX_WIDTH, BOX_WIDTH, BOX_WIDTH, BOX_WIDTH};
   int		boxTypes[] = {vMIXED, vMIXED, vMIXED, vMIXED,  vMIXED,  vMIXED};
 
-  /*
-   * Initialize the Cdk screen.
-   *
-   * Make sure the putty terminal is large enough
-   */
+  /* Initialize the Cdk screen.
+     Make sure the putty terminal is large enough */
   window = initscr();
   cdkscreen = initCDKScreen(window);
 
