@@ -2,6 +2,7 @@
 # jcs160330@utdallas.edu
 # CS 3377.002
 
+# Compiler used
 CXX = g++
 
 # All warnings and no const char * problems
