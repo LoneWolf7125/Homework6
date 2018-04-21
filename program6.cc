@@ -1,22 +1,35 @@
-/*
- * Usage of CDK Matrix
- *
- * File:   example1.cc
- * Author: Stephen Perkins
- * Email:  stephen.perkins@utdallas.edu
- */
+// Jonathan Snead
+// jcs160330@utdallas.edu
+// CS 3377.002
 
 #include <iostream>
 #include "cdk.h"
-
+#include <fstream>
+#include <stdint.h>
+#include <inttypes.h>
 
 #define MATRIX_WIDTH 3
 #define MATRIX_HEIGHT 5
 #define BOX_WIDTH 15
-#define MATRIX_NAME_STRING "Test Matrix"
+#define MATRIX_NAME_STRING "Binary File Contents"
 
 using namespace std;
 
+class BinaryFileHeader
+{
+public:
+  uint32_t magicNumber;
+  uint32_t versionNumber;
+  uint64_t numRecords;
+};
+
+const int maxRecordStringLength = 25;
+class BinaryFileRecord
+{
+public:
+  uint8_t strLength;
+  char stringBuffer[maxRecordStringLength];
+};
 
 int main()
 {
@@ -68,15 +81,34 @@ int main()
   /*
    * Dipslay a message
    */
-  setCDKMatrixCell(myMatrix, 5, 3, "Last Box");
-  drawCDKMatrix(myMatrix, true);    /* required  */
 
-  setCDKMatrixCell(myMatrix, 1, 1, "First Box");
-  drawCDKMatrix(myMatrix, true);
+  BinaryFileHeader *mySecRecord = new BinaryFileHeader();
+  //BinaryFileRecord *myRecord = new BinaryFileRecord();
+
+  ifstream binFile("cs3377.bin", ios::in | ios::binary);
+
+  if (binFile.is_open())
+    {
+      int row = 1;
+      int col = 1;
+      while (binFile.read((char*)mySecRecord, sizeof(BinaryFileHeader)))
+	{
+	  setCDKMatrixCell(myMatrix, row, col, "First Box");
+	  drawCDKMatrix(myMatrix, true);    /* required  */
+	  //printf("0x%02" PRIu32 "\n", mySecRecord->magicNumber);
+	}
+    }
+
+  else 
+    printf("Error opening Binary file\n");
+
+  binFile.close();
 
   /* So we can see results, pause until a key is pressed. */
   unsigned char x;
   cin >> x;
+
+  delete [] mySecRecord;
 
   // Cleanup screen
   endCDK();
