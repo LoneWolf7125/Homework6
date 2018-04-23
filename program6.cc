@@ -11,7 +11,7 @@
 
 #define MATRIX_WIDTH 3
 #define MATRIX_HEIGHT 5
-#define BOX_WIDTH 15
+#define BOX_WIDTH 20
 #define MATRIX_NAME_STRING "Binary File Contents"
 
 using namespace std;
@@ -84,12 +84,116 @@ int main()
    */
 
   BinaryFileHeader *mySecRecord = new BinaryFileHeader();
-  //BinaryFileRecord *myRecord = new BinaryFileRecord();
+  BinaryFileRecord *myRecord = new BinaryFileRecord();
 
   ifstream binFile("cs3377.bin", ios::in | ios::binary);
 
   if (binFile.is_open())
     {
+      binFile.read((char *)mySecRecord, sizeof(BinaryFileHeader));
+      binFile.read((char *)myRecord, sizeof(BinaryFileRecord));
+
+      ostringstream trans;
+
+      trans << "0x" << hex << uppercase << mySecRecord->magicNumber;
+      string boxAA = "Magic: " + trans.str();
+      trans.str("");
+
+      trans << dec << mySecRecord->versionNumber;
+      string boxAB = "Version: " + trans.str();
+      trans.str("");
+
+      trans << mySecRecord->numRecords;
+      string boxAC = "NumRecords: " + trans.str();
+      trans.str("");
+
+
+      trans << myRecord->stringBuffer;
+      string boxBB = trans.str();
+      trans.str("");
+
+      trans << strlen(boxBB.c_str());
+      string boxBA = "strlen: " + trans.str();
+      trans.str("");
+
+      binFile.read((char *)myRecord, sizeof(BinaryFileRecord));
+      trans << myRecord->stringBuffer;
+      string boxCB = trans.str();
+      trans.str("");
+
+      trans << strlen(boxCB.c_str());
+      string boxCA = "strlen: " + trans.str();
+      trans.str("");
+
+      binFile.read((char *)myRecord, sizeof(BinaryFileRecord));
+      trans << myRecord->stringBuffer;
+      string boxDB = trans.str();
+      trans.str("");
+
+      trans << strlen(boxDB.c_str());
+      string boxDA = "strlen: " + trans.str();
+      trans.str("");
+
+      binFile.read((char *)myRecord, sizeof(BinaryFileRecord));
+      trans << myRecord->stringBuffer;
+      string boxEB = trans.str();
+      trans.str("");
+
+      trans << strlen(boxEB.c_str());
+      string boxEA = "strlen: " + trans.str();
+      trans.str("");
+
+
+      setCDKMatrixCell(myMatrix, 1, 1, boxAA.c_str());
+      drawCDKMatrix(myMatrix, true);   
+
+      setCDKMatrixCell(myMatrix, 1, 2, boxAB.c_str());
+      drawCDKMatrix(myMatrix, true);   
+
+      setCDKMatrixCell(myMatrix, 1, 3, boxAC.c_str());
+      drawCDKMatrix(myMatrix, true);   
+
+      setCDKMatrixCell(myMatrix, 2, 1, boxBA.c_str());
+      drawCDKMatrix(myMatrix, true);   
+
+      setCDKMatrixCell(myMatrix, 2, 2, boxBB.c_str());
+      drawCDKMatrix(myMatrix, true);   
+
+      setCDKMatrixCell(myMatrix, 3, 1, boxCA.c_str());
+      drawCDKMatrix(myMatrix, true);   
+
+      setCDKMatrixCell(myMatrix, 3, 2, boxCB.c_str());
+      drawCDKMatrix(myMatrix, true);   
+
+      setCDKMatrixCell(myMatrix, 4, 1, boxDA.c_str());
+      drawCDKMatrix(myMatrix, true);   
+
+      setCDKMatrixCell(myMatrix, 4, 2, boxDB.c_str());
+      drawCDKMatrix(myMatrix, true);   
+
+      setCDKMatrixCell(myMatrix, 5, 1, boxEA.c_str());
+      drawCDKMatrix(myMatrix, true);   
+
+      setCDKMatrixCell(myMatrix, 5, 2, boxEB.c_str());
+      drawCDKMatrix(myMatrix, true);   
+    }
+
+  else 
+    printf("Error opening Binary file\n");
+
+  binFile.close();
+
+  /* So we can see results, pause until a key is pressed. */
+  unsigned char x;
+  cin >> x;
+
+  delete [] mySecRecord;
+
+  // Cleanup screen
+  endCDK();
+}
+
+/*
       int row = 1;
       int col = 1;
       char *buffer = (char *)malloc(100);
@@ -108,23 +212,7 @@ int main()
 	}
       string str = transferVar.str();
 	  setCDKMatrixCell(myMatrix, row, col, "First Box");
-	  drawCDKMatrix(myMatrix, true);    /* required  */
-	  setCDKMatrixCell(myMatrix, row+1, col+1, str.c_str());
-	  drawCDKMatrix(myMatrix, true);    /* required  */
+	  drawCDKMatrix(myMatrix, true);    // required  
+	   // required  
 	  //printf("0x%02" PRIu32 "\n", mySecRecord->magicNumber);
-    }
-
-  else 
-    printf("Error opening Binary file\n");
-
-  binFile.close();
-
-  /* So we can see results, pause until a key is pressed. */
-  unsigned char x;
-  cin >> x;
-
-  delete [] mySecRecord;
-
-  // Cleanup screen
-  endCDK();
-}
+*/
