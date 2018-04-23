@@ -7,6 +7,7 @@
 #include <fstream>
 #include <stdint.h>
 #include <inttypes.h>
+#include <sstream>
 
 #define MATRIX_WIDTH 3
 #define MATRIX_HEIGHT 5
@@ -38,21 +39,24 @@ int main()
   CDKSCREEN	*cdkscreen;
   CDKMATRIX     *myMatrix;           // CDK Screen Matrix
 
-   /*Remember that matrix starts out at 1,1.
-   Since arrays start out at 0, the first entries
-   below ("R0", and "C0") are just placeholders
-   
-   Finally... make sure your arrays have enough entries given the
-   values you choose to set for MATRIX_WIDTH and MATRIX_HEIGHT
-   above.*/
+  // Remember that matrix starts out at 1,1.
+  // Since arrays start out at 0, the first entries
+  // below ("R0", and "C0") are just placeholders
+  // 
+  // Finally... make sure your arrays have enough entries given the
+  // values you choose to set for MATRIX_WIDTH and MATRIX_HEIGHT
+  // above.
 
   const char 		*rowTitles[] = {"0", "a", "b", "c", "d", "e"};
   const char 		*columnTitles[] = {"0", "a", "b", "c", "d", "e"};
   int		boxWidths[] = {BOX_WIDTH, BOX_WIDTH, BOX_WIDTH, BOX_WIDTH, BOX_WIDTH, BOX_WIDTH};
   int		boxTypes[] = {vMIXED, vMIXED, vMIXED, vMIXED,  vMIXED,  vMIXED};
 
-  /* Initialize the Cdk screen.
-     Make sure the putty terminal is large enough */
+  /*
+   * Initialize the Cdk screen.
+   *
+   * Make sure the putty terminal is large enough
+   */
   window = initscr();
   cdkscreen = initCDKScreen(window);
 
@@ -88,12 +92,26 @@ int main()
     {
       int row = 1;
       int col = 1;
+      char *buffer = (char *)malloc(100);
+      ostringstream transferVar;
       while (binFile.read((char*)mySecRecord, sizeof(BinaryFileHeader)))
 	{
+	  if (binFile.read((char*)mySecRecord, sizeof(BinaryFileHeader)) != "\n")
+	    {
+	      transferVar << mySecRecord->magicNumber;
+	      // strcpy(buffer, (mySecRecord->magicNumber));
+	      // buffer = reinterpret_cast<const char *>(mySecRecord->magicNumber);
+	    }
+	   else 
+	     {
+	     }
+	}
+      string str = transferVar.str();
 	  setCDKMatrixCell(myMatrix, row, col, "First Box");
 	  drawCDKMatrix(myMatrix, true);    /* required  */
+	  setCDKMatrixCell(myMatrix, row+1, col+1, str.c_str());
+	  drawCDKMatrix(myMatrix, true);    /* required  */
 	  //printf("0x%02" PRIu32 "\n", mySecRecord->magicNumber);
-	}
     }
 
   else 
