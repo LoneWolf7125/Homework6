@@ -2,6 +2,7 @@
 // jcs160330@utdallas.edu
 // CS 3377.002
 
+// Includes
 #include <iostream>
 #include "cdk.h"
 #include <fstream>
@@ -9,6 +10,7 @@
 #include <inttypes.h>
 #include <sstream>
 
+// Define statments 
 #define MATRIX_WIDTH 3
 #define MATRIX_HEIGHT 5
 #define BOX_WIDTH 20
@@ -16,6 +18,7 @@
 
 using namespace std;
 
+// Got from the instructions
 class BinaryFileHeader
 {
 public:
@@ -37,40 +40,27 @@ int main()
 
   WINDOW	*window;
   CDKSCREEN	*cdkscreen;
-  CDKMATRIX     *myMatrix;           // CDK Screen Matrix
-
-  // Remember that matrix starts out at 1,1.
-  // Since arrays start out at 0, the first entries
-  // below ("R0", and "C0") are just placeholders
-  // 
-  // Finally... make sure your arrays have enough entries given the
-  // values you choose to set for MATRIX_WIDTH and MATRIX_HEIGHT
-  // above.
+  CDKMATRIX     *myMatrix;           
 
   const char 		*rowTitles[] = {"0", "a", "b", "c", "d", "e"};
   const char 		*columnTitles[] = {"0", "a", "b", "c", "d", "e"};
   int		boxWidths[] = {BOX_WIDTH, BOX_WIDTH, BOX_WIDTH, BOX_WIDTH, BOX_WIDTH, BOX_WIDTH};
   int		boxTypes[] = {vMIXED, vMIXED, vMIXED, vMIXED,  vMIXED,  vMIXED};
 
-  /*
-   * Initialize the Cdk screen.
-   *
-   * Make sure the putty terminal is large enough
-   */
+  // Initialize the Cdk screen.
+  // Make sure the putty terminal is large enough.
   window = initscr();
   cdkscreen = initCDKScreen(window);
 
-  /* Start CDK Colors */
+  // Start CDK Colors 
   initCDKColor();
 
-  /*
-   * Create the matrix.  Need to manually cast (const char**) to (char **)
-  */
+  // Create the matrix.  Need to manually cast (const char**) to (char **)
   myMatrix = newCDKMatrix(cdkscreen, CENTER, CENTER, MATRIX_HEIGHT, MATRIX_WIDTH, MATRIX_HEIGHT, MATRIX_WIDTH,
 			  MATRIX_NAME_STRING, (char **) rowTitles, (char **) columnTitles, boxWidths,
 				     boxTypes, 1, 1, ' ', ROW, true, true, false);
 
-  if (myMatrix ==NULL)
+  if (myMatrix ==NULL) // Can't create the CDK matrix
     {
       printf("Error creating Matrix\n");
       _exit(1);
@@ -79,71 +69,89 @@ int main()
   /* Display the Matrix */
   drawCDKMatrix(myMatrix, true);
 
-  /*
-   * Dipslay a message
-   */
-
+  // Header of the binary file
   BinaryFileHeader *mySecRecord = new BinaryFileHeader();
+  // The actual records 
   BinaryFileRecord *myRecord = new BinaryFileRecord();
 
+  // Opens the file
   ifstream binFile("cs3377.bin", ios::in | ios::binary);
 
-  if (binFile.is_open())
+  if (binFile.is_open()) // Checks if it is open
     {
+      // Read the first line for header
       binFile.read((char *)mySecRecord, sizeof(BinaryFileHeader));
+      // Read the second line for the record
       binFile.read((char *)myRecord, sizeof(BinaryFileRecord));
 
+      // For number conversions
       ostringstream trans;
 
+      // First box is the hex value so this converts it
       trans << "0x" << hex << uppercase << mySecRecord->magicNumber;
-      string boxAA = "Magic: " + trans.str();
-      trans.str("");
+      string boxAA = "Magic: " + trans.str(); // Box 1 1
+      trans.str(""); // Clear it
 
+      // Second box is the number of versions so this converts it
       trans << dec << mySecRecord->versionNumber;
-      string boxAB = "Version: " + trans.str();
-      trans.str("");
+      string boxAB = "Version: " + trans.str(); // Box 1 2
+      trans.str(""); // Clear it 
 
+      // Third box is for the number of records so this gets it
       trans << mySecRecord->numRecords;
-      string boxAC = "NumRecords: " + trans.str();
-      trans.str("");
+      string boxAC = "NumRecords: " + trans.str(); // Box 1 3
+      trans.str(""); // Clear it
 
 
+      // Second line already read above
+      // Put line in to convert it
       trans << myRecord->stringBuffer;
-      string boxBB = trans.str();
-      trans.str("");
+      string boxBB = trans.str(); // Box 2 2
+      trans.str(""); // Clear it
 
+      // Get the length of the previous box
       trans << strlen(boxBB.c_str());
-      string boxBA = "strlen: " + trans.str();
-      trans.str("");
+      string boxBA = "strlen: " + trans.str(); // Box 2 1
+      trans.str(""); // Clear it
 
+      // Third line read in here
       binFile.read((char *)myRecord, sizeof(BinaryFileRecord));
+      // Put line in to convert it
       trans << myRecord->stringBuffer;
-      string boxCB = trans.str();
-      trans.str("");
+      string boxCB = trans.str(); // Box 3 2
+      trans.str(""); // Clear it
 
+      // Get the length of the previous box
       trans << strlen(boxCB.c_str());
-      string boxCA = "strlen: " + trans.str();
-      trans.str("");
+      string boxCA = "strlen: " + trans.str(); // Box 3 1
+      trans.str(""); // Clear it
 
+      // Fourth line read here
       binFile.read((char *)myRecord, sizeof(BinaryFileRecord));
+      // Put line in to convert it
       trans << myRecord->stringBuffer;
-      string boxDB = trans.str();
-      trans.str("");
+      string boxDB = trans.str(); // Box 4 2
+      trans.str(""); // Clear it
 
+      // Get the length of the previous box
       trans << strlen(boxDB.c_str());
-      string boxDA = "strlen: " + trans.str();
-      trans.str("");
+      string boxDA = "strlen: " + trans.str(); // Box 4 1
+      trans.str(""); // Clear it
 
+      // Fifth line read here
       binFile.read((char *)myRecord, sizeof(BinaryFileRecord));
+      // Put line in to convert it
       trans << myRecord->stringBuffer;
-      string boxEB = trans.str();
-      trans.str("");
+      string boxEB = trans.str(); // Box 5 2
+      trans.str(""); // Clear it
 
+      // Get the length of the previous box
       trans << strlen(boxEB.c_str());
-      string boxEA = "strlen: " + trans.str();
-      trans.str("");
+      string boxEA = "strlen: " + trans.str(); // Box 5 1
+      trans.str(""); // Clear it
 
 
+      // Print each one in their designated box in the CDK
       setCDKMatrixCell(myMatrix, 1, 1, boxAA.c_str());
       drawCDKMatrix(myMatrix, true);   
 
@@ -178,41 +186,20 @@ int main()
       drawCDKMatrix(myMatrix, true);   
     }
 
-  else 
+  else // Can't open binary file
     printf("Error opening Binary file\n");
 
+  // Close the binary file
   binFile.close();
 
-  /* So we can see results, pause until a key is pressed. */
+  // So we can see results, pause until a key is pressed. 
   unsigned char x;
   cin >> x;
 
+  // Delete for space 
   delete [] mySecRecord;
+  delete [] myRecord;
 
   // Cleanup screen
   endCDK();
 }
-
-/*
-      int row = 1;
-      int col = 1;
-      char *buffer = (char *)malloc(100);
-      ostringstream transferVar;
-      while (binFile.read((char*)mySecRecord, sizeof(BinaryFileHeader)))
-	{
-	  if (binFile.read((char*)mySecRecord, sizeof(BinaryFileHeader)) != "\n")
-	    {
-	      transferVar << mySecRecord->magicNumber;
-	      // strcpy(buffer, (mySecRecord->magicNumber));
-	      // buffer = reinterpret_cast<const char *>(mySecRecord->magicNumber);
-	    }
-	   else 
-	     {
-	     }
-	}
-      string str = transferVar.str();
-	  setCDKMatrixCell(myMatrix, row, col, "First Box");
-	  drawCDKMatrix(myMatrix, true);    // required  
-	   // required  
-	  //printf("0x%02" PRIu32 "\n", mySecRecord->magicNumber);
-*/
