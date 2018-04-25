@@ -82,7 +82,7 @@ int main()
       // Read the first line for header
       binFile.read((char *)mySecRecord, sizeof(BinaryFileHeader));
       // Read the second line for the record
-      binFile.read((char *)myRecord, sizeof(BinaryFileRecord));
+      //binFile.read((char *)myRecord, sizeof(BinaryFileRecord));
 
       // For number conversions
       ostringstream trans;
@@ -102,7 +102,7 @@ int main()
       string boxAC = "NumRecords: " + trans.str(); // Box 1 3
       trans.str(""); // Clear it
 
-
+      /*
       // Second line already read above
       // Put line in to convert it
       trans << myRecord->stringBuffer;
@@ -183,6 +183,33 @@ int main()
       drawCDKMatrix(myMatrix, true);   
 
       setCDKMatrixCell(myMatrix, 5, 2, boxEB.c_str());
+      drawCDKMatrix(myMatrix, true);   
+    }*/
+
+      for (int i = 1; i <= 5; i++)
+	{
+	  binFile.read((char *)myRecord, sizeof(BinaryFileRecord));
+	  
+	  trans << myRecord->stringBuffer;
+	  string buffer = trans.str();
+	  trans.str("");
+	  
+	  trans << strlen(buffer.c_str());
+	  string strlen = "strlen: " + trans.str();
+	  trans.str("");
+	  
+	  setCDKMatrixCell(myMatrix, (i+1), 1, strlen.c_str());
+	  setCDKMatrixCell(myMatrix, (i+1), 2, buffer.c_str());
+	  drawCDKMatrix(myMatrix, true);
+	}
+
+      setCDKMatrixCell(myMatrix, 1, 1, boxAA.c_str());
+      drawCDKMatrix(myMatrix, true);   
+
+      setCDKMatrixCell(myMatrix, 1, 2, boxAB.c_str());
+      drawCDKMatrix(myMatrix, true);   
+
+      setCDKMatrixCell(myMatrix, 1, 3, boxAC.c_str());
       drawCDKMatrix(myMatrix, true);   
     }
 
