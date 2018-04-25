@@ -185,24 +185,30 @@ int main()
       setCDKMatrixCell(myMatrix, 5, 2, boxEB.c_str());
       drawCDKMatrix(myMatrix, true);   
     }*/
-
+      
+      // Recursive run of the record section
       for (int i = 1; i <= 5; i++)
 	{
+	  // Read in the next line everytime 
 	  binFile.read((char *)myRecord, sizeof(BinaryFileRecord));
 	  
+	  // Get the values into the string
 	  trans << myRecord->stringBuffer;
 	  string buffer = trans.str();
-	  trans.str("");
+	  trans.str(""); // Clear it
 	  
+	  // Get the values into the string
 	  trans << strlen(buffer.c_str());
 	  string strlen = "strlen: " + trans.str();
-	  trans.str("");
+	  trans.str(""); // Clear it
 	  
+	  // Print record section 
 	  setCDKMatrixCell(myMatrix, (i+1), 1, strlen.c_str());
 	  setCDKMatrixCell(myMatrix, (i+1), 2, buffer.c_str());
 	  drawCDKMatrix(myMatrix, true);
 	}
 
+      // Print header section
       setCDKMatrixCell(myMatrix, 1, 1, boxAA.c_str());
       drawCDKMatrix(myMatrix, true);   
 
